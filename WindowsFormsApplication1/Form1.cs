@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -20,15 +16,18 @@ namespace WindowsFormsApplication1
             InitializeComponent();
         }
 
-        private async void button1_Click(object sender, EventArgs e)
+        private  void button1_Click(object sender, EventArgs e)
         {
             clock.Restart();
+            var tasks = new List<Task>();
             Console.WriteLine($"** Inici Processant cues **");
             for (int i = 0; i < nCaixeres; i++)
             {
                 var caixera = new Caixera() { Id = i };
-                await Task.Run(() => caixera.ProcessarCua());
+
+                 tasks.Add(Task.Run(() => caixera.ProcessarCua()));
             }
+            Task.WaitAll(tasks.ToArray());
             Console.WriteLine($"** Final Processant cues **");
             Text = $"Total A: {clock.ElapsedMilliseconds.ToString("n2")}";
         }
@@ -63,21 +62,25 @@ namespace WindowsFormsApplication1
 
         private void button4_Click(object sender, EventArgs e)
         {
-            var tasks = new List<Task>();
+            clock.Restart();
+            var threads = new List<Thread>();
             var caixeres = new Caixera[nCaixeres];
             for (int i = 0; i < nCaixeres; i++)
-            {
-                caixeres[i] = new Caixera();
-                caixeres[i].Id = i;
-                var task = new Task(() =>
-                              caixeres[i].ProcessarCua());
+                {
+
+                    var caixera = new Caixera() { Id = i  };
+                    var thread = new Thread(() => caixera.ProcessarCua());
+                    threads.Add(thread);
+                    thread.Start();
+                }
 
 
-                tasks.Add(task);
-                task.Start();
-
-            }
+                foreach (Thread thread in threads)
+                    thread.Join();
+                Text = $"Total D: {clock.ElapsedMilliseconds.ToString("n2")}";
 
         }
+
     }
+    
 }

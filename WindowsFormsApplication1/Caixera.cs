@@ -14,7 +14,7 @@ namespace WindowsFormsApplication1
         {
             Console.WriteLine($"** Inici Processant cua...{Id} **");
             //fer algo heavy...
-            Thread.Sleep(500);
+            Thread.Sleep(5000);
             Console.WriteLine($"** Final Processant cua...{Id} **");
         }
 
@@ -22,7 +22,7 @@ namespace WindowsFormsApplication1
         {
             Console.WriteLine($"** Inici Processant cua...{Id} **");
             //fer algo heavy...
-            await Task.Delay(500);
+            await Task.Delay(5000);
             Console.WriteLine($"** Final Processant cua...{Id} **");
         }
     }
